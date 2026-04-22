@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10ta Mini Ilova | HTML+CSS+JS</title>
+  <style>
+    :root {
+      --primary: #4f46e5; --primary-hover: #4338ca;
+      --bg: #f3f4f6; --card: #ffffff; --text: #111827; --border: #d1d5db;
+      --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
+    
+    /* Tab Navigatsiya */
+    .tabs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 24px; }
+    .tabs button { padding: 8px 14px; border: 1px solid var(--border); background: #e5e7eb; cursor: pointer; border-radius: 8px; font-size: 13px; font-weight: 500; transition: 0.2s; }
+    .tabs button:hover { background: #d1d5db; }
+    .tabs button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Ilova Konteyneri */
+    .app { display: none; background: var(--card); padding: 24px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+    .app.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    h2 { margin-bottom: 16px; font-size: 20px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 6px; }
+    .form-row { display: flex; gap: 8px; margin: 12px 0; }
+    input, select, button { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+    button { background: var(--primary); color: #fff; border: none; cursor: pointer; font-weight: 500; transition: 0.2s; }
+    button:hover { background: var(--primary-hover); }
+    button.secondary { background: #6b7280; }
+    button.danger { background: var(--danger); }
+    .result { margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; font-weight: 500; min-height: 24px; word-break: break-word; }
+    
+    /* 1. Vazifalar */
+    #todo-list { list-style: none; margin-top: 12px; max-height: 200px; overflow-y: auto; }
+    #todo-list li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
+    #todo-list li.done span { text-decoration: line-through; color: #9ca3af; }
+    #todo-list button { padding: 6px 10px; font-size: 12px; margin-left: 6px; }
+
+    /* 2. Kalkulyator */
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+    .calc-btn { padding: 16px; font-size: 18px; background: #f1f5f9; color: #000; }
+    .calc-btn.op { background: var(--warning); color: #fff; }
+    .calc-btn.equal { background: var(--success); color: #fff; grid-column: span 2; }
+    .calc-display { grid-column: span 4; padding: 16px; font-size: 24px; text-align: right; background: #0f172a; color: #22d3ee; border-radius: 8px; margin-bottom: 8px; min-height: 60px; }
+
+    /* 3. Sekundomer */
+    .stopwatch { text-align: center; }
+    .time-display { font-size: 36px; font-family: monospace; margin: 20px 0; }
+    .controls { display: flex; gap: 10px; justify-content: center; }
+
+    /* 4. Rang Tanlagich */
+    .color-box { width: 100%; height: 100px; border-radius: 10px; margin: 12px 0; border: 2px dashed var(--border); transition: 0.3s; }
+    .color-input { width: 100%; height: 40px; cursor: pointer; }
+
+    /* 5. Viktorina */
+    .quiz-option { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: left; }
+    .quiz-option:hover { background: #e0e7ff; }
+    .quiz-score { font-size: 14px; color: #6b7280; margin-bottom: 10px; }
+
+    /* 6. Parol Generatori */
+    .password-output { background: #0f172a; color: #22d3ee; padding: 12px; border-radius: 8px; font-family: monospace; letter-spacing: 1px; text-align: center; margin: 12px 0; }
+    .range-wrap { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+
+    /* 7. BMI */
+    .bmi-result { font-size: 18px; font-weight: bold; margin-top: 10px; }
+    .bmi-bar { height: 8px; background: #e5e7eb; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+    .bmi-fill { height: 100%; background: var(--success); transition: 0.4s; }
+
+    /* 8. Slider */
+    .slider-container { position: relative; overflow: hidden; border-radius: 10px; height: 250px; background: #000; }
+    .slider-track { display: flex; height: 100%; transition: transform 0.4s ease; }
+    .slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; font-weight: bold; }
+    .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: #fff; padding: 10px 14px; border: none; cursor: pointer; }
+    .prev { left: 10px; } .next { right: 10px; }
+
+    /* 9. Konvertor */
+    .convert-row { display: flex; gap: 8px; align-items: center; }
+    .convert-row select { flex: 1; }
+
+    /* 10. Iqtibos */
+    .quote-card { background: #f0fdf4; border-left: 4px solid var(--success); padding: 16px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+    .quote-text { font-style: italic; font-size: 16px; margin-bottom: 8px; }
+    .quote-author { text-align: right; color: #6b7280; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div class="tabs" id="tabs">
+    <button class="active" data-app="1">1. Vazifalar</button>
+    <button data-app="2">2. Kalkulyator</button>
+    <button data-app="3">3. Sekundomer</button>
+    <button data-app="4">4. Rang Tanlagich</button>
+    <button data-app="5">5. Viktorina</button>
+    <button data-app="6">6. Parol</button>
+    <button data-app="7">7. BMI</button>
+    <button data-app="8">8. Slider</button>
+    <button data-app="9">9. Konvertor</button>
+    <button data-app="10">10. Iqtibos</button>
+  </div>
+
+  <!-- 1. Vazifalar Ro'yxati -->
+  <div class="app active" id="app1">
+    <h2>📋 Vazifalar Ro'yxati</h2>
+    <div class="form-row">
+      <input type="text" id="todo-input" placeholder="Yangi vazifa..." style="flex:1;">
+      <button onclick="addTodo()">Qo'shish</button>
+    </div>
+    <ul id="todo-list"></ul>
+  </div>
+
+  <!-- 2. Kalkulyator -->
+  <div class="app" id="app2">
+    <h2>🧮 Kalkulyator</h2>
+    <div class="calc-display" id="calc-display">0</div>
+    <div class="calc-grid">
+      <button class="calc-btn" onclick="calcClear()">C</button>
+      <button class="calc-btn op" onclick="calcInput('(')">(</button>
+      <button class="calc-btn op" onclick="calcInput(')')">)</button>
+      <button class="calc-btn op" onclick="calcInput('/')">÷</button>
+      <button class="calc-btn" onclick="calcInput('7')">7</button>
+      <button class="calc-btn" onclick="calcInput('8')">8</button>
+      <button class="calc-btn" onclick="calcInput('9')">9</button>
+      <button class="calc-btn op" onclick="calcInput('*')">×</button>
+      <button class="calc-btn" onclick="calcInput('4')">4</button>
+      <button class="calc-btn" onclick="calcInput('5')">5</button>
+      <button class="calc-btn" onclick="calcInput('6')">6</button>
+      <button class="calc-btn op" onclick="calcInput('-')">-</button>
+      <button class="calc-btn" onclick="calcInput('1')">1</button>
+      <button class="calc-btn" onclick="calcInput('2')">2</button>
+      <button class="calc-btn" onclick="calcInput('3')">3</button>
+      <button class="calc-btn op" onclick="calcInput('+')">+</button>
+      <button class="calc-btn" onclick="calcInput('0')">0</button>
+      <button class="calc-btn" onclick="calcInput('.')">.</button>
+      <button class="calc-btn equal" onclick="calcEval()">=</button>
+    </div>
+  </div>
+
+  <!-- 3. Sekundomer -->
+  <div class="app" id="app3">
+    <h2>⏱ Sekundomer</h2>
+    <div class="stopwatch">
+      <div class="time-display" id="stopwatch-display">00:00:00</div>
+      <div class="controls">
+        <button id="sw-start" onclick="swStart()">Boshlash</button>
+        <button class="danger" id="sw-stop" onclick="swStop()">To'xtatish</button>
+        <button class="secondary" onclick="swReset()">Qayta boshlash</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Rang Tanlagich -->
+  <div class="app" id="app4">
+    <h2>🎨 Rang Tanlagich</h2>
+    <input type="color" class="color-input" id="color-picker" value="#4f46e5">
+    <div class="color-box" id="color-preview" style="background:#4f46e5;"></div>
+    <div class="result" id="color-hex">#4F46E5</div>
+    <button onclick="copyColor()" style="margin-top:10px; width:100%;">Kodni nusxalash</button>
+  </div>
+
+  <!-- 5. Viktorina -->
+  <div class="app" id="app5">
+    <h2>📝 Viktorina</h2>
+    <div class="quiz-score">Savol: <span id="q-current">1</span>/3 | Ball: <span id="q-score">0</span></div>
+    <h3 id="q-text"></h3>
+    <div id="q-options"></div>
+    <button id="q-next" onclick="nextQuestion()" style="margin-top:12px; display:none;">Keyingi</button>
+  </div>
+
+  <!-- 6. Parol Generatori -->
+  <div class="app" id="app6">
+    <h2>🔐 Parol Generatori</h2>
+    <div class="range-wrap">
+      <label>Uzunlik: <span id="pass-len">12</span></label>
+      <input type="range" id="pass-range" min="6" max="32" value="12" oninput="document.getElementById('pass-len').textContent=this.value">
+    </div>
+    <div style="margin:10px 0; display:flex; gap:12px; flex-wrap:wrap;">
+      <label><input type="checkbox" id="pass-upper" checked> A-Z</label>
+      <label><input type="checkbox" id="pass-num" checked> 0-9</label>
+      <label><input type="checkbox" id="pass-sym"> @#$%</label>
+    </div>
+    <div class="password-output" id="pass-out">Click Generate</div>
+    <button onclick="generatePass()" style="width:100%;">Parol yaratish</button>
+  </div>
+
+  <!-- 7. BMI Hisoblagich -->
+  <div class="app" id="app7">
+    <h2>⚖️ BMI Hisoblagich</h2>
+    <div class="form-row">
+      <input type="number" id="bmi-weight" placeholder="Vazn (kg)" style="flex:1;">
+      <input type="number" id="bmi-height" placeholder="Bo'y (cm)" style="flex:1;">
+    </div>
+    <button onclick="calcBMI()" style="width:100%;">Hisoblash</button>
+    <div class="bmi-result" id="bmi-result"></div>
+    <div class="bmi-bar"><div class="bmi-fill" id="bmi-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- 8. Rasm Slideri -->
+  <div class="app" id="app8">
+    <h2>🖼 Rasm Slideri</h2>
+    <div class="slider-container">
+      <div class="slider-track" id="slider-track">
+        <div class="slide" style="background:linear-gradient(45deg, #ff6b6b, #feca57)">1-Rasm</div>
+        <div class="slide" style="background:linear-gradient(45deg, #54a0ff, #5f27cd)">2-Rasm</div>
+        <div class="slide" style="background:linear-gradient(45deg, #00d2d3, #1dd1a1)">3-Rasm</div>
+        <div class="slide" style="background:linear-gradient(45deg, #ff9ff4, #54a0ff)">4-Rasm</div>
+      </div>
+      <button class="slider-btn prev" onclick="slideMove(-1)">‹</button>
+      <button class="slider-btn next" onclick="slideMove(1)">›</button>
+    </div>
+  </div>
+
+  <!-- 9. Valyuta/Unit Konvertori -->
+  <div class="app" id="app9">
+    <h2>🔄 Konvertor</h2>
+    <input type="number" id="conv-input" placeholder="Miqdor" style="width:100%; margin-bottom:10px;">
+    <div class="convert-row">
+      <select id="conv-from"><option value="km">KM</option><option value="mi">Mile</option><option value="m">Meter</option></select>
+      <span>→</span>
+      <select id="conv-to"><option value="mi">Mile</option><option value="km">KM</option><option value="m">Meter</option></select>
+    </div>
+    <button onclick="convert()" style="width:100%; margin-top:10px;">Konvertatsiya qilish</button>
+    <div class="result" id="conv-result">Natija: -</div>
+  </div>
+
+  <!-- 10. Iqtibos Generatori -->
+  <div class="app" id="app10">
+    <h2>💡 Iqtibos Generatori</h2>
+    <div class="quote-card">
+      <div class="quote-text" id="quote-text">"Boshlash uchun ajoyib bo'lish shart emas, lekin ajoyib bo'lish uchun boshlash shart."</div>
+      <div class="quote-author" id="quote-author">— Zig Ziglar</div>
+    </div>
+    <button onclick="newQuote()" style="width:100%;">Yangi Iqtibos</button>
+  </div>
+
+  <script>
+    // Tab boshqaruvi
+    const tabs = document.querySelectorAll('.tabs button');
+    const apps = document.querySelectorAll('.app');
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      apps.forEach(a => a.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('app' + btn.dataset.app).classList.add('active');
+    }));
+
+    // 1. Vazifalar
+    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    function renderTodos() {
+      const ul = document.getElementById('todo-list');
+      ul.innerHTML = '';
+      todos.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.className = t.done ? 'done' : '';
+        li.innerHTML = `<span onclick="toggleTodo(${i})">${t.text}</span>
+          <button class="danger" onclick="deleteTodo(${i})">✕</button>`;
+        ul.appendChild(li);
+      });
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+    function addTodo() {
+      const input = document.getElementById('todo-input');
+      if (!input.value.trim()) return;
+      todos.push({ text: input.value.trim(), done: false });
+      input.value = '';
+      renderTodos();
+    }
+    function toggleTodo(i) { todos[i].done = !todos[i].done; renderTodos(); }
+    function deleteTodo(i) { todos.splice(i, 1); renderTodos(); }
+    renderTodos();
+
+    // 2. Kalkulyator
+    let calcExp = '';
+    const calcDisp = document.getElementById('calc-display');
+    function calcInput(v) { if(calcExp==='0'&&v!=='.')calcExp=''; calcExp+=v; calcDisp.textContent=calcExp||'0'; }
+    function calcClear() { calcExp=''; calcDisp.textContent='0'; }
+    function calcEval() { try { calcDisp.textContent = eval(calcExp) || '0'; calcExp = calcDisp.textContent; } catch { calcDisp.textContent='Xato'; calcExp=''; } }
+
+    // 3. Sekundomer
+    let swTime=0, swInterval=null, swRunning=false;
+    function formatTime(ms) { const h=String(Math.floor(ms/3600000)).padStart(2,'0'); const m=String(Math.floor((ms%3600000)/60000)).padStart(2,'0'); const s=String(Math.floor((ms%60000)/1000)).padStart(2,'0'); return `${h}:${m}:${s}`; }
+    function swStart() { if(!swRunning){ swInterval=setInterval(()=>{swTime+=1000; document.getElementById('stopwatch-display').textContent=formatTime(swTime);},1000); swRunning=true; document.getElementById('sw-start').disabled=true; } }
+    function swStop() { clearInterval(swInterval); swRunning=false; document.getElementById('sw-start').disabled=false; }
+    function swReset() { swStop(); swTime=0; document.getElementById('stopwatch-display').textContent='00:00:00'; }
+
+    // 4. Rang
+    const colorPicker = document.getElementById('color-picker');
+    colorPicker.addEventListener('input', e => { document.getElementById('color-preview').style.background=e.target.value; document.getElementById('color-hex').textContent=e.target.value.toUpperCase(); });
+    function copyColor() { navigator.clipboard.writeText(document.getElementById('color-hex').textContent); alert('Nusxalandi!'); }
+
+    // 5. Viktorina
+    const quiz = [
+      {q:"HTML nima?", o:["Dasturlash tili", "Belgilash tili", "Baza", "OS"], a:1},
+      {q:"JS qanday tur?", o:["Kompilyatsiya", "Interpretatsiya", "Statik", "Binarni"], a:1},
+      {q:"CSS qanday ishlatiladi?", o:["Serverda", "Brauzerda", "Mobil tizimda", "Baza"], a:1}
+    ];
+    let qIdx=0, qScore=0;
+    function loadQuiz() {
+      if(qIdx>=quiz.length){ document.getElementById('q-text').textContent="Viktorina tugadi!"; document.getElementById('q-options').innerHTML=`<div style="padding:12px;background:#e0f2fe;border-radius:8px;">Sizning natijangiz: ${qScore}/${quiz.length}</div>`; document.getElementById('q-next').style.display='none'; return; }
+      const q=quiz[qIdx];
+      document.getElementById('q-text').textContent=q.q;
+      document.getElementById('q-current').textContent=qIdx+1;
+      const opts=document.getElementById('q-options'); opts.innerHTML='';
+      q.o.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-option'; btn.textContent=opt; btn.onclick=()=>checkAnswer(i,q.a,btn); opts.appendChild(btn); });
+      document.getElementById('q-next').style.display='none';
+    }
+    function checkAnswer(sel, correct, btn) { document.querySelectorAll('.quiz-option').forEach(b=>b.disabled=true); if(sel===correct){ btn.style.background='#d1fae5'; btn.style.borderColor='#10b981'; qScore++; } else { btn.style.background='#fee2e2'; btn.style.borderColor='#ef4444'; } document.getElementById('q-score').textContent=qScore; document.getElementById('q-next').style.display='block'; }
+    function nextQuestion(){ qIdx++; loadQuiz(); }
+    loadQuiz();
+
+    // 6. Parol
+    function generatePass() {
+      const len=parseInt(document.getElementById('pass-range').value);
+      const useUpper=document.getElementById('pass-upper').checked;
+      const useNum=document.getElementById('pass-num').checked;
+      const useSym=document.getElementById('pass-sym').checked;
+      let chars="abcdefghijklmnopqrstuvwxyz";
+      if(useUpper) chars+="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      if(useNum) chars+="0123456789";
+      if(useSym) chars+="!@#$%^&*()_+~`|}{[]:;?><,./-=";
+      let pass=""; for(let i=0;i<len;i++) pass+=chars[Math.floor(Math.random()*chars.length)];
+      document.getElementById('pass-out').textContent=pass;
+    }
+
+    // 7. BMI
+    function calcBMI() {
+      const w=parseFloat(document.getElementById('bmi-weight').value);
+      const h=parseFloat(document.getElementById('bmi-height').value)/100;
+      if(!w||!h) return;
+      const bmi=(w/(h*h)).toFixed(1);
+      let cat="", color="#10b981";
+      if(bmi<18.5){cat="Kam vazn"; color="#f59e0b"} else if(bmi<25){cat="Normal"; color="#10b981"} else if(bmi<30){cat="Ortiqcha"; color="#f97316"} else{cat="Semizlik"; color="#ef4444"}
+      document.getElementById('bmi-result').textContent=`BMI: ${bmi} — ${cat}`;
+      document.getElementById('bmi-result').style.color=color;
+      document.getElementById('bmi-fill').style.width=`${Math.min(bmi/40*100,100)}%`;
+      document.getElementById('bmi-fill').style.background=color;
+    }
+
+    // 8. Slider
+    let slideIdx=0; const slides=document.querySelectorAll('.slide');
+    function slideMove(dir) { slideIdx=(slideIdx+dir+slides.length)%slides.length; document.getElementById('slider-track').style.transform=`translateX(-${slideIdx*100}%)`; }
+
+    // 9. Konvertor
+    function convert() {
+      const val=parseFloat(document.getElementById('conv-input').value);
+      const from=document.getElementById('conv-from').value;
+      const to=document.getElementById('conv-to').value;
+      if(isNaN(val)) return;
+      const factors={km:1, mi:0.621371, m:1000};
+      const base=val/factors[from];
+      const res=(base*factors[to]).toFixed(4);
+      document.getElementById('conv-result').textContent=`Natija: ${res} ${to}`;
+    }
+
+    // 10. Iqtibos
+    const quotes=[
+      {t:"Boshlash uchun ajoyib bo'lish shart emas, lekin ajoyib bo'lish uchun boshlash shart.", a:"Zig Ziglar"},
+      {t:"Muvaffaqiyat — bu 1% ilhom va 99% mehnat.", a:"Thomas Edison"},
+      {t:"Vaqt — bu eng qimmat narsa. Uni behuda sarflama.", a:"Seneca"},
+      {t:"Xato qilish — bu o'rganishning bir qismi.", a:"Nelson Mandela"},
+      {t:"Kod yozish — bu san'at. Har bir qator hikoya aytadi.", a:"Noma'lum"}
+    ];
+    function newQuote(){ const q=quotes[Math.floor(Math.random()*quotes.length)]; document.getElementById('quote-text').textContent=`"${q.t}"`; document.getElementById('quote-author').textContent=`— ${q.a}`; }
+  </script>
+</body>
+</html>
